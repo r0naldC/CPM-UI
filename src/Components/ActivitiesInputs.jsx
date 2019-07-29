@@ -10,7 +10,7 @@ function ActivitiesInputs(props) {
     
       
     <Grid item sm={12} lg={8} id={id} >
-      <TextField label="Actividad" />
+      <TextField  label="Actividad" />
       <TextField label="Duracion" />
       <TextField label="Costo Por MES " />
       <TextField label="Prerequisisto" />
