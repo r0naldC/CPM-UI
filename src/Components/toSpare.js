@@ -1,4 +1,11 @@
-function Activity(name, duration, cost, ...pre) {
+/**
+ * 
+ * @param {String} name 
+ * @param {Number} duration 
+ * @param {Number} cost 
+ * @param  {...String} pre 
+ */
+export function Activity(name, duration, cost, ...pre) {
   this.name = name;
   this.duration = duration;
   this.cost = cost;
@@ -19,13 +26,13 @@ we must do some checks:
  * 
  * @param {Array<Activity>} activities 
  * @param {Number} adminExpenses 
+ * @param {Number} totalDuration 
  */
-function calculateTotalCost(activities, adminExpenses) {
+export function calculateTotalCost(activities, totalDuration, adminExpenses) {
   return (
     activities.reduce((total, { cost, duration }) => {
       return total + cost * duration;
-    }, 0) +
-    totalDuration * adminExpenses
+    }, 0)
   );
 }
 
@@ -35,7 +42,7 @@ function calculateTotalCost(activities, adminExpenses) {
  * @param {Array<Activity>} activities 
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
-function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitiesDone) {
+export function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitiesDone) {
   handleActivities(activities, flatActivitiesDone, groupedActivitiesDone);
   return groupedActivitiesDone
     .map(group => {
@@ -49,11 +56,26 @@ function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitie
  * 
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
-function calculateCriticalPath(groupedActivitiesDone) {
+export function calculateCriticalPath(groupedActivitiesDone) {
   return groupedActivitiesDone
     .map(group => {
       return group.filter(act => act.duration === getHighestDuration(group))
     });
+}
+
+// Main
+export function calculateBudget(groupedActivities, adminExpenses) {
+  const budget = []
+  for (const group of groupedActivities) {
+    const groupHighestDuration = getHighestDuration(group);
+    for (let time = 1; time <= groupHighestDuration; time++) {
+      budget.push(adminExpenses)
+      group.forEach(act => {
+        if (time <= act.duration) budget[budget.length - 1] += act.cost;
+      });
+    }
+  }
+  return budget;
 }
 
 /* Helper, basically does most part of the job, i think it can explain itself.
@@ -139,35 +161,33 @@ function getHighestDuration(activityGroup) {
   );
 }
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SAMPLES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-const data = [
-  new Activity("A", 10, 100000),
-  new Activity("B", 5, 500000),
-  new Activity("C", 1, 1000000, "A", "B"),
-  new Activity("D", 9, 2000000, "C"),
-  new Activity("E", 7, 800000, "C"),
-  new Activity("F", 1, 1500000, "D", "E"),
-  new Activity("G", 4, 600000, "D", "E")
-];
+// const data = [
+//   new Activity("A", 10, 100000),
+//   new Activity("B", 5, 500000),
+//   new Activity("C", 1, 1000000, "A", "B"),
+//   new Activity("D", 9, 2000000, "C"),
+//   new Activity("E", 7, 800000, "C"),
+//   new Activity("F", 1, 1500000, "D", "E"),
+//   new Activity("G", 4, 600000, "D", "E")
+// ];
 
-const adminExpenses = 50000;
+// const adminExpenses = 50000;
 
 // Basically, all activities that are done.
-let flatActivitiesDone = []; 
-/* Activities that are grouped are those who can be handled
-at the same time because their prerequisites are already done.*/
-let groupedActivitiesDone = [[]];
+// let flatActivitiesDone = [];  // Initialize like this
+// let groupedActivitiesDone = [[]]; // Initialize like this
 
-const totalDuration = calculateTotalDuration(data, groupedActivitiesDone, flatActivitiesDone);
-const totalCost = calculateTotalCost(data, adminExpenses);
-const criticalPath = calculateCriticalPath(groupedActivitiesDone);
+// const totalDuration = calculateTotalDuration(data, groupedActivitiesDone, flatActivitiesDone);
+// const totalCost = calculateTotalCost(data, totalDuration, adminExpenses);
+// const criticalPath = calculateCriticalPath(groupedActivitiesDone);
+// const budget = calculateBudget(groupedActivitiesDone);
 
-console.log(`Duracion Total: ${totalDuration} Meses`);
-console.log(`Costo Total: RD$${totalCost}`);
-console.log('Ruta Critica:')
+// console.log(totalDuration)
+// console.log(totalCost)
+// criticalPath.forEach(element => {
+//   console.log(element[0].name);
+// });
 
-// Printing Out Loud
-criticalPath.forEach(element => {
-  console.log(element[0].name);
-});
+// console.log(budget)

@@ -1,0 +1,47 @@
+.App {
+    text-align: left;
+  }
+  
+  .table {
+    max-width: 75% !important;
+    margin: 5px auto;
+    background-color: rgb(243, 245, 248);
+    text-align: left;
+  }
+  .tablePre {
+    max-width: 30%;
+    margin: 5px auto;
+    background-color: rgb(243, 245, 248);
+    text-align: left;
+  }
+  .table-sm {
+    max-width: 30%;
+    margin: 5px auto;
+    background-color: white;
+  }
+  
+  .table-cell-sm {
+    width: 50px;
+  }
+  .tr{
+      background-color: rgb(110, 110, 248);
+      text-transform: capitalize;
+      color: #f0ecec;
+
+    font-weight: bold;
+  }
+ 
+.list{
+   
+     height:200px;
+
+     overflow:auto;
+   
+    max-Width: 360;
+    scroll-margin-right: auto;
+}
+  html {
+    background-color: #f0ecec;
+    text-align: left;
+  }
+  
