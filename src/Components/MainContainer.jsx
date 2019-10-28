@@ -16,8 +16,12 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
-
-import RemoveIcon from '@material-ui/icons/Remove';
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined'
+import SendIcon from '@material-ui/icons/Send';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 import './css.css';
 
@@ -128,17 +132,24 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   return (
     <Grid container>
       <Grid item xs={12}>
-      <TextField label="Gastos Administrativos" type="number" value={adminExpenses} onChange={handleChangeadmExpenses}></TextField>
+      <TextField className="tr2" label="Gastos Administrativos" type="number" value={adminExpenses} onChange={handleChangeadmExpenses}></TextField>
     <Table className="table">
     
-    <TableHead>
+    <TableHead className="tr">
       <TableRow>
-        <TableCell>Nombre</TableCell>
-        <TableCell>Prerequisitos</TableCell>
-        <TableCell>Duracion</TableCell>
-        <TableCell>Costo</TableCell>
-        <TableCell>Acciones</TableCell>
-      </TableRow>
+        <TableCell className="tr">Nombre</TableCell>
+        <TableCell className="tr">Prerequisitos</TableCell>
+        <TableCell className="tr">Duracion N</TableCell>
+        <TableCell className="tr">Costo N</TableCell>
+        <TableCell className="tr">Duracion R</TableCell>
+        <TableCell className="tr">Costo R</TableCell>
+        <TableCell className="tr">Te N</TableCell>
+        <TableCell className="tr">Te R</TableCell>
+        <TableCell className="tr">Vte N</TableCell>
+        <TableCell className="tr">Vte r</TableCell>
+        <TableCell className="tr">Importe</TableCell>
+        <TableCell className="tr">Eliminar</TableCell>
+             </TableRow>
     </TableHead>
     <TableBody>
       {
@@ -158,9 +169,24 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
                   </MenuItem>)}
                 </Select>
               } </TableCell>
-              <TableCell > <TextField type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField> </TableCell>
+              <TableCell > <TextField label = "A" type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField>
+                <TextField label = "M"></TextField>
+                <TextField label = "B"></TextField>
+               </TableCell>
+
               <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
-              <TableCell> <IconButton onClick={() => removeActivity(data[index].name)} > <RemoveIcon></RemoveIcon> </IconButton> </TableCell>
+
+              <TableCell > <TextField label = "A" type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField>
+                <TextField label = "M"></TextField>
+                <TextField label = "B"></TextField>
+               </TableCell>
+               <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
+               <TableCell></TableCell>
+               <TableCell></TableCell>
+               <TableCell></TableCell>
+               <TableCell></TableCell>
+               <TableCell></TableCell>
+              <TableCell> <IconButton onClick={() => removeActivity(data[index].name)} > <DeleteForeverOutlinedIcon> </DeleteForeverOutlinedIcon> </IconButton> </TableCell>
             </TableRow>
           )
         })
@@ -168,44 +194,99 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
     </TableBody>
     <TableFooter>
       <Grid >
-        <IconButton onClick={() => { createNewActivity() }}><AddIcon /></IconButton>
-        <IconButton onClick={() => { onSubmit(data) }}><PlayArrowIcon /></IconButton>
+        <IconButton onClick={() => { createNewActivity() }}> <AddIcon /> Añadir </IconButton>
+        <IconButton onClick={() => { onSubmit(data) }}>  <SendIcon> </SendIcon> Calcular</IconButton>
       </Grid>
     </TableFooter>
 
   </Table>
         
-         </Grid>
+         </Grid><br/><hr/>
       </Grid>
    )
 }
 
 function Results({ duration, cost, criticalPath, budget, adminExpenses }) {
   return (
-    <div>
-      <h1>Resultados</h1>
-      <p>Duracion Total: {duration} meses</p>
-      <p>Costo Total: RD${cost + (duration * adminExpenses)}</p>
-      <span>Ruta Critica: </span>
-      {criticalPath.map(element => <span>{`(${element[0].name})` + ' '}</span>)}
-      <h2>Presupuesto</h2>
-      <Table className="table-sm">
-        <TableHead>
-          <TableRow>
-            <TableCell className="table-cell-sm">Mes</TableCell>
-            <TableCell>Costo</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {budget.map((elem, index) => {
-            return <TableRow>
-              <TableCell>{index}.</TableCell>
-              <TableCell>{elem}</TableCell>
-            </TableRow>
-          })}
-        </TableBody>
-      </Table>
-    </div>
+      <Grid container>
+        <Grid item xs={12}>
+          <Table className="table">
+            <TableHead className="tr">
+              <TableRow >
+                <TableCell className="tr">Duracion Total</TableCell>
+                <TableCell className="tr">Costo Total</TableCell>
+                <TableCell className="tr">Ruta Critica</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>{duration} Meses</TableCell>
+               <TableCell>{cost + (duration * adminExpenses)}</TableCell> 
+               <TableCell>{criticalPath.map(element => <span>{`(${element[0].name})` + ' '}</span>)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+
+        </Grid><br/><hr/>
+        
+        <Grid container>
+          <Grid item xs={12}>
+              <Table className="table1">
+                <TableHead className="tr" >
+                  <TableRow>
+                    <TableCell className="tr">Presupuesto</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody >
+                  <TableRow >
+                    <div className="tr1">
+                  <TableCell>
+                      {budget.map((elem, index) => {
+                      return <p> Mes {index + 1}, {elem}</p>})}
+                     </TableCell>
+                     </div>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              </Grid>
+              </Grid>
+              
+       
+        
+          
+        
+
+
+
+
+      </Grid>
+      
+      
+
+    // <div>
+    //   <h1>Resultados</h1>
+    //   <p>Duracion Total: {duration} meses</p>
+    //   <p>Costo Total: RD${cost + (duration * adminExpenses)}</p>
+    //   <span>Ruta Critica: </span>
+    //   {criticalPath.map(element => <span>{`(${element[0].name})` + ' '}</span>)}
+    //   <h2>Presupuesto</h2>
+    //   <Table className="table-sm">
+    //     <TableHead>
+    //       <TableRow>
+    //         <TableCell className="table-cell-sm">Mes</TableCell>
+    //         <TableCell>Costo</TableCell>
+    //       </TableRow>
+    //     </TableHead>
+    //     <TableBody>
+    //       {budget.map((elem, index) => {
+    //         return <TableRow>
+    //           <TableCell>{index}.</TableCell>
+    //           <TableCell>{elem}</TableCell>
+    //         </TableRow>
+    //       })}
+    //     </TableBody>
+    //   </Table>
+    // </div>
   )
 }
 

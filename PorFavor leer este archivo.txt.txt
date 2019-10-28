@@ -1,0 +1,6 @@
+Saludo, Gracias por utilizar nuestro sistema CPM.
+Para poder utilizar este proyecto debe inastalar los siguientes Programas,
+Nodejs, luego istalar los siguientes complemetos:
+ npm install
+ npm install @material-ui/core
+ npm install @material-ui/icon
