@@ -3,13 +3,13 @@
   }
   
   .table {
-    max-width: 75% !important;
+    max-width: 80% !important;
     margin: 5px auto;
     background-color: rgb(243, 245, 248);
     text-align: left;
   }
   .table1 {
-    max-width: 30% ;
+    max-width: 40% ;
     margin: 5px auto;
     background-color: rgb(243, 245, 248);
     text-align: left;
@@ -34,7 +34,7 @@
       background-color: rgb(110, 110, 248);
       text-transform: capitalize !important;
       color: #ffffff !important;
-      font-weight: 800 !important;
+      font-weight: 600 !important;
         
   }
  

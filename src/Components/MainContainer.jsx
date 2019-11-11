@@ -27,15 +27,12 @@ import './css.css';
 
 import { calculateTotalCost, calculateTotalDuration, calculateCriticalPath, Activity, calculateBudget } from './toSpare';
 import { isValueInAnotherArray, canRemoveActivity } from './comprobation';
-
+let resul;
 let sampleData = [
   new Activity("A", 10, 100000),
   new Activity("B", 5, 500000),
   new Activity("C", 1, 1000000, "A", "B"),
-  new Activity("D", 9, 2000000, "C"),
-  new Activity("E", 7, 800000, "C"),
-  new Activity("F", 1, 1500000, "D", "E"),
-  new Activity("G", 4, 600000, "D", "E")
+  
 ];
 
 let flatActivitiesDone = [];
@@ -122,7 +119,16 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   function createNewActivity() {
     setData([...data, new Activity('', 0, 0)])
   }
+  function durationConst(a,m,b){
+    this.a = a;
+    this.m = m;
+    this.b = b;
 
+  }
+  function durationR(durationConst){
+   resul = durationConst.a + (durationConst.m * 4) + durationConst.b;
+
+  }
   useEffect(() => {
     // createNewActivity();
     // createNewActivity();
@@ -143,11 +149,11 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
         <TableCell className="tr">Costo N</TableCell>
         <TableCell className="tr">Duracion R</TableCell>
         <TableCell className="tr">Costo R</TableCell>
-        <TableCell className="tr">Te N</TableCell>
-        <TableCell className="tr">Te R</TableCell>
+         <TableCell className="tr">Te N</TableCell>
+      {/*<TableCell className="tr">Te R</TableCell>
         <TableCell className="tr">Vte N</TableCell>
         <TableCell className="tr">Vte r</TableCell>
-        <TableCell className="tr">Importe</TableCell>
+        <TableCell className="tr">Importe</TableCell> */}
         <TableCell className="tr">Eliminar</TableCell>
              </TableRow>
     </TableHead>
@@ -170,22 +176,23 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
                 </Select>
               } </TableCell>
               <TableCell > <TextField label = "A" type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField>
-                <TextField label = "M"></TextField>
-                <TextField label = "B"></TextField>
+                <TextField label = "M" type="number"></TextField>
+                <TextField label = "B" type="number"></TextField>
+          
                </TableCell>
 
               <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
 
-              <TableCell > <TextField label = "A" type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField>
+              <TableCell > <TextField label = "A" type="number" value={} onChange={event => handleChange(event, 'duration', index)}></TextField>
                 <TextField label = "M"></TextField>
                 <TextField label = "B"></TextField>
                </TableCell>
                <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
+                <TableCell ><TextField value={resul}></TextField></TableCell>
+               {/*<TableCell></TableCell>
                <TableCell></TableCell>
                <TableCell></TableCell>
-               <TableCell></TableCell>
-               <TableCell></TableCell>
-               <TableCell></TableCell>
+               <TableCell></TableCell> */}
               <TableCell> <IconButton onClick={() => removeActivity(data[index].name)} > <DeleteForeverOutlinedIcon> </DeleteForeverOutlinedIcon> </IconButton> </TableCell>
             </TableRow>
           )
