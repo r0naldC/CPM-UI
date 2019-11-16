@@ -29,10 +29,13 @@ import { calculateTotalCost, calculateTotalDuration, calculateCriticalPath, Acti
 import { isValueInAnotherArray, canRemoveActivity } from './comprobation';
 let resul;
 let sampleData = [
-  new Activity("A", 10, 100000),
-  new Activity("B", 5, 500000),
-  new Activity("C", 1, 1000000, "A", "B"),
-  
+  new Activity("A", 1,3,3, 100000)
+  // new Activity("B", 5, 500000),
+  // new Activity("C", 1, 1000000, "A", "B"),
+  // new Activity("D", 9, 2000000, "C"),
+  // new Activity("E", 7, 800000, "C"),
+  // new Activity("F", 1, 1500000, "D", "E"),
+  // new Activity("G", 4, 600000, "D", "E")
 ];
 
 let flatActivitiesDone = [];
@@ -46,6 +49,7 @@ function App() {
   let [duration, setDuration] = useState(0);
   let [criticalPath, setCriticalPath] = useState([]);
   let [budget, setBudget] = useState([]);
+  // let [formula, setFormula] = useState(0);
   let [wasCalculated, setCalc] = useState(false);
 
   const handleData = (data) => {
@@ -53,6 +57,7 @@ function App() {
     setCost(calculateTotalCost(data, duration, adminExpenses));
     setCriticalPath(calculateCriticalPath(groupedActivitiesDone));
     setBudget(calculateBudget(groupedActivitiesDone, adminExpenses));
+    // setFormula(formula1(a,m,b));
     setCalc(true);
   }
 
@@ -89,7 +94,14 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
     setData(newData);
     console.log(data)
   }
-  
+  function changeV({ target: { value } }, index) {
+    let newData = [...data];
+    newData[index].a.push(value);
+    newData[index].m.push(value);
+    newData[index].b.push(value);
+    setData(newData);
+    console.log(newData);
+  }
   function addPre({ target: { value } }, index) {
     let newData = [...data];
     newData[index].pre.push(value);
@@ -112,12 +124,12 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
     };
 
     newData = newData.filter(el => el.name !== activityName);
-    console.log(newData);
+    // console.log(newData);
     setData(newData);
   } // Check if there's an activity that has this one as a prerequisite
 
   function createNewActivity() {
-    setData([...data, new Activity('', 0, 0)])
+    setData([...data, new Activity('', 0,0,0, 0)])
   }
   function durationConst(a,m,b){
     this.a = a;
@@ -150,10 +162,10 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
         <TableCell className="tr">Duracion R</TableCell>
         <TableCell className="tr">Costo R</TableCell>
          <TableCell className="tr">Te N</TableCell>
-      {/*<TableCell className="tr">Te R</TableCell>
+      <TableCell className="tr">Te R</TableCell>
         <TableCell className="tr">Vte N</TableCell>
         <TableCell className="tr">Vte r</TableCell>
-        <TableCell className="tr">Importe</TableCell> */}
+        <TableCell className="tr">Importe</TableCell>
         <TableCell className="tr">Eliminar</TableCell>
              </TableRow>
     </TableHead>
@@ -175,24 +187,30 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
                   </MenuItem>)}
                 </Select>
               } </TableCell>
-              <TableCell > <TextField label = "A" type="number" value={act.duration} onChange={event => handleChange(event, 'duration', index)}></TextField>
-                <TextField label = "M" type="number"></TextField>
-                <TextField label = "B" type="number"></TextField>
-          
+
+              <TableCell > 
+              <TextField label = "A" type="number" value={act.a} onChange={event => handleChange(event, 'a', index)}></TextField>
+              <TextField label = "M" type="number" value={act.b} onChange={event => handleChange(event, 'b', index)}></TextField>
+              <TextField label = "B" type="number" value={act.m} onChange={event => handleChange(event, 'm', index)}></TextField>
                </TableCell>
 
               <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
 
-              <TableCell > <TextField label = "A" type="number" value={} onChange={event => handleChange(event, 'duration', index)}></TextField>
-                <TextField label = "M"></TextField>
-                <TextField label = "B"></TextField>
+              <TableCell > <TextField label = "A" type="number" value={act.a} onChange={event => handleChange(event, 'a', index)}></TextField>
+              <TextField label = "M" type="number" value={act.m} onChange={event => handleChange(event, 'm', index)}></TextField>
+              <TextField label = "B" type="number" value={act.b} onChange={event => handleChange(event, 'b', index)}></TextField>
+
+
                </TableCell>
                <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
-                <TableCell ><TextField value={resul}></TextField></TableCell>
-               {/*<TableCell></TableCell>
+               <TableCell > {act.duration}</TableCell>
                <TableCell></TableCell>
+               <TableCell></TableCell> 
                <TableCell></TableCell>
-               <TableCell></TableCell> */}
+               <TableCell></TableCell> 
+               
+               
+
               <TableCell> <IconButton onClick={() => removeActivity(data[index].name)} > <DeleteForeverOutlinedIcon> </DeleteForeverOutlinedIcon> </IconButton> </TableCell>
             </TableRow>
           )
