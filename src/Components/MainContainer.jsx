@@ -25,15 +25,15 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 
 import './css.css';
 
-import { calculateTotalCost, calculateTotalDuration, calculateCriticalPath, Activity, calculateBudget } from './toSpare';
+import { calculateTotalCost, calculateTotalDuration, calculateCriticalPath, Activity, calculateBudget, formula1 } from './toSpare';
 import { isValueInAnotherArray, canRemoveActivity } from './comprobation';
 let resul;
 let sampleData = [
-  new Activity("A", 1,3,3, 100000)
-  // new Activity("B", 5, 500000),
-  // new Activity("C", 1, 1000000, "A", "B"),
-  // new Activity("D", 9, 2000000, "C"),
-  // new Activity("E", 7, 800000, "C"),
+  new Activity("A", 2.0, 100000),
+  new Activity("B", 5.0, 1000000,"A"),
+  new Activity("C", 3.0, 500000, "A"),
+  new Activity("D", 6.0, 900000, "B","C"),
+  new Activity("E", 4.0, 700000, "D")
   // new Activity("F", 1, 1500000, "D", "E"),
   // new Activity("G", 4, 600000, "D", "E")
 ];
@@ -49,7 +49,9 @@ function App() {
   let [duration, setDuration] = useState(0);
   let [criticalPath, setCriticalPath] = useState([]);
   let [budget, setBudget] = useState([]);
-  // let [formula, setFormula] = useState(0);
+  let [formula, setFormula] = useState(0);
+  let [formula1, setFormula1] = useState(0);
+  let [formula2, setFormula2] = useState(0);
   let [wasCalculated, setCalc] = useState(false);
 
   const handleData = (data) => {
@@ -58,6 +60,7 @@ function App() {
     setCriticalPath(calculateCriticalPath(groupedActivitiesDone));
     setBudget(calculateBudget(groupedActivitiesDone, adminExpenses));
     // setFormula(formula1(a,m,b));
+    console.log(formula)
     setCalc(true);
   }
 
@@ -65,16 +68,20 @@ function App() {
     setExpenses( parseInt(event.target.value))
   }
 
+  
   return (
     <div className="App">
       <Form onSubmit={handleData} handleChangeadmExpenses={handleChangeadmExpenses} adminExpenses={adminExpenses} />
+      
       {wasCalculated && <div>
-        <div className="horizontal-divisor"></div> <Results duration={duration} cost={cost} criticalPath={criticalPath} budget={budget} adminExpenses={adminExpenses}/>
+        <div className="horizontal-divisor"></div> 
+        <Results duration={duration} cost={cost} criticalPath={criticalPath} budget={budget} adminExpenses={adminExpenses}/>
       </div>}
     </div>
   );
 }
 
+// }
 // Probably can use this to render a Chip with delete button
 function preChip(value, handleDeleteFN = () => { }) {
   return <Chip
@@ -94,14 +101,11 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
     setData(newData);
     console.log(data)
   }
-  function changeV({ target: { value } }, index) {
-    let newData = [...data];
-    newData[index].a.push(value);
-    newData[index].m.push(value);
-    newData[index].b.push(value);
-    setData(newData);
-    console.log(newData);
-  }
+  function formula1(a,m,b) {
+    console.log((a + (4.0 * m) + b) / 6.0)
+    return ((a + (4.0 * m) + b) / 6.0).toFixed(2)
+}
+  
   function addPre({ target: { value } }, index) {
     let newData = [...data];
     newData[index].pre.push(value);
@@ -129,19 +133,12 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   } // Check if there's an activity that has this one as a prerequisite
 
   function createNewActivity() {
-    setData([...data, new Activity('', 0,0,0, 0)])
+    setData([...data, new Activity('', 0, 0)])
   }
-  function durationConst(a,m,b){
-    this.a = a;
-    this.m = m;
-    this.b = b;
-
-  }
-  function durationR(durationConst){
-   resul = durationConst.a + (durationConst.m * 4) + durationConst.b;
-
-  }
+  
+  //}
   useEffect(() => {
+    formula1();
     // createNewActivity();
     // createNewActivity();
   }, [])
@@ -194,11 +191,11 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
               <TextField label = "B" type="number" value={act.m} onChange={event => handleChange(event, 'm', index)}></TextField>
                </TableCell>
 
-              <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
+              <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell> 
 
-              <TableCell > <TextField label = "A" type="number" value={act.a} onChange={event => handleChange(event, 'a', index)}></TextField>
-              <TextField label = "M" type="number" value={act.m} onChange={event => handleChange(event, 'm', index)}></TextField>
-              <TextField label = "B" type="number" value={act.b} onChange={event => handleChange(event, 'b', index)}></TextField>
+              <TableCell > <TextField label = "A" onChange={event => handleChange(event, 'a', index)}></TextField>
+              <TextField label = "M" type="number"  onChange={event => handleChange(event, 'm', index)}></TextField>
+              <TextField label = "B" type="number"  onChange={event => handleChange(event, 'b', index)}></TextField>
 
 
                </TableCell>

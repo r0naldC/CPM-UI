@@ -1,4 +1,4 @@
-let inputs = document.getElementsByTagName('input'),
+let inputs = document.getElementsByTagName('TextField'),
     inputsArray = []
 for (const input of inputs) {
     inputsArray.push(input);
@@ -9,11 +9,18 @@ inputsArray
     .forEach(input => {
         input.addEventListener('change', () => {
             formula1();
+            Activity();
         })
     })
 export function formula1(a, m, b) {
-    return (a + (4.0 * m) + b) / 6.0
+    console.log((a + (4.0 * m) + b) / 6.0)
+    return ((a + (4.0 * m) + b) / 6.0).toFixed(2)
 }
+export function formula2(a, b) {
+    // console.log((a + (4.0 * m) + b) / 6.0)
+    return (((a + b) / 6.0) ^ 0.5).toFixed(2)
+}
+
 /**
  * 
  * @param {String} name 
@@ -21,9 +28,9 @@ export function formula1(a, m, b) {
  * @param {Number} cost 
  * @param  {...String} pre 
  */
-export function Activity(name, a, m, b, cost, ...pre) {
+export function Activity(name, duration, cost, ...pre) {
     this.name = name;
-    this.duration = formula1(a, m, b);
+    this.duration = duration;
     this.cost = cost;
     this.pre = pre;
     this.isDone = false;
