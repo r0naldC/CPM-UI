@@ -28,10 +28,12 @@ export function formula2(a, b) {
  * @param {Number} cost 
  * @param  {...String} pre 
  */
-export function Activity(name, duration, cost, ...pre) {
+export function Activity(name, duration, duration2, cost, cost2, ...pre) {
     this.name = name;
     this.duration = duration;
+    this.duration2 = duration2
     this.cost = cost;
+    this.cost2 = cost2;
     this.pre = pre;
     this.isDone = false;
 }
@@ -53,7 +55,10 @@ we must do some checks:
  */
 export function calculateTotalCost(activities, totalDuration, adminExpenses) {
     return (
-        activities.reduce((total, { cost, duration }) => {
+        activities.reduce((total, {
+            cost,
+            duration
+        }) => {
             return total + cost * duration;
         }, 0)
     );
@@ -66,7 +71,9 @@ export function calculateTotalCost(activities, totalDuration, adminExpenses) {
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
 export function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitiesDone) {
+    // debugger;
     handleActivities(activities, flatActivitiesDone, groupedActivitiesDone);
+    debugger;
     return groupedActivitiesDone
         .map(group => {
             return getHighestDuration(group);
@@ -80,6 +87,7 @@ export function calculateTotalDuration(activities, groupedActivitiesDone, flatAc
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
 export function calculateCriticalPath(groupedActivitiesDone) {
+    debugger;
     return groupedActivitiesDone
         .map(group => {
             return group.filter(act => act.duration === getHighestDuration(group))
@@ -142,6 +150,8 @@ function handleActivities(activities, flatActivitiesDone, groupedActivitiesDone)
         }
         if (indexOfActivity !== activities.length - 1)
             groupedActivitiesDone.push([]);
+
+        debugger;
     }
 }
 
@@ -178,8 +188,11 @@ function canActivityProceed(currentActivity, flatActivitiesDone) {
  * @param {Array<Array<Activity>>} activityGroup 
  */
 function getHighestDuration(activityGroup) {
+    debugger;
     return activityGroup.reduce(
-        (max, { duration }) => (duration > max ? duration : max),
+        (max, {
+            duration
+        }) => (duration > max ? duration : max),
         0
     );
 }
