@@ -52,8 +52,12 @@ we must do some checks:
  * @param {Number} totalDuration 
  */
 export function calculateTotalCost(activities, totalDuration, adminExpenses) {
+    // debugger;
     return (
-        activities.reduce((total, { cost, duration }) => {
+        activities.reduce((total, {
+            cost,
+            duration
+        }) => {
             return total + cost * duration;
         }, 0)
     );
@@ -66,6 +70,7 @@ export function calculateTotalCost(activities, totalDuration, adminExpenses) {
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
 export function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitiesDone) {
+    // debugger;
     handleActivities(activities, flatActivitiesDone, groupedActivitiesDone);
     return groupedActivitiesDone
         .map(group => {
@@ -80,9 +85,15 @@ export function calculateTotalDuration(activities, groupedActivitiesDone, flatAc
  * @param {Array<Array<Activity>>} groupedActivitiesDone 
  */
 export function calculateCriticalPath(groupedActivitiesDone) {
+    debugger;
     return groupedActivitiesDone
         .map(group => {
-            return group.filter(act => act.duration === getHighestDuration(group))
+            return group.filter(act => {
+                if (act.duration === getHighestDuration(group)) {
+                    console.log(act);
+                }
+                return act.duration === getHighestDuration(group)
+            })
         });
 }
 
@@ -111,6 +122,8 @@ export function calculateBudget(groupedActivities, adminExpenses) {
  */
 function handleActivities(activities, flatActivitiesDone, groupedActivitiesDone) {
     //By default these grab the ones without prerequisites
+
+    // debugger;
 
     while (flatActivitiesDone.length !== activities.length) {
         let activitiesNotDone = activities.filter(act => !act.isDone);
@@ -179,7 +192,9 @@ function canActivityProceed(currentActivity, flatActivitiesDone) {
  */
 function getHighestDuration(activityGroup) {
     return activityGroup.reduce(
-        (max, { duration }) => (duration > max ? duration : max),
+        (max, {
+            duration
+        }) => (duration > max ? duration : max),
         0
     );
 }

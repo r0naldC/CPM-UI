@@ -20,16 +20,26 @@ import SendIcon from "@material-ui/icons/Send";
 import Result from "./Result";
 import Budget from "./Budget";
 
+import {
+  calculateTotalCost,
+  calculateTotalDuration,
+  calculateCriticalPath,
+  Activity,
+  calculateBudget,
+  formula1
+} from "./toSpare";
+
 class NewMain extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currency: null,
+      adminExpenses: 50000,
       timeUnit: "meses",
       myActivities: [
         {
           name: "A",
-          prerequisites: [],
+          pre: [],
           nDuration: {
             a: 15,
             b: 20,
@@ -45,7 +55,55 @@ class NewMain extends Component {
         },
         {
           name: "B",
-          prerequisites: [],
+          pre: ["A"],
+          nDuration: {
+            a: 15,
+            b: 20,
+            m: 23
+          },
+          nPrice: 37500,
+          rDuration: {
+            a: 10,
+            b: 17,
+            m: 20
+          },
+          rPrice: 25000
+        },
+        {
+          name: "C",
+          pre: ["A"],
+          nDuration: {
+            a: 15,
+            b: 20,
+            m: 23
+          },
+          nPrice: 37500,
+          rDuration: {
+            a: 10,
+            b: 17,
+            m: 20
+          },
+          rPrice: 25000
+        },
+        {
+          name: "D",
+          pre: ["B", "C"],
+          nDuration: {
+            a: 15,
+            b: 20,
+            m: 23
+          },
+          nPrice: 37500,
+          rDuration: {
+            a: 10,
+            b: 17,
+            m: 20
+          },
+          rPrice: 25000
+        },
+        {
+          name: "E",
+          pre: ["D"],
           nDuration: {
             a: 15,
             b: 20,
@@ -59,64 +117,40 @@ class NewMain extends Component {
           },
           rPrice: 25000
         }
-        // {
-        //   name: "C",
-        //   prerequisites: [],
-        //   nDuration: {
-        //     a: 15,
-        //     b: 20,
-        //     m: 23
-        //   },
-        //   nPrice: 37500,
-        //   rDuration: {
-        //     a: 10,
-        //     b: 17,
-        //     m: 20
-        //   },
-        //   rPrice: 25000
-        // },
-        // {
-        //   name: "D",
-        //   prerequisites: [],
-        //   nDuration: {
-        //     a: 15,
-        //     b: 20,
-        //     m: 23
-        //   },
-        //   nPrice: 37500,
-        //   rDuration: {
-        //     a: 10,
-        //     b: 17,
-        //     m: 20
-        //   },
-        //   rPrice: 25000
-        // }
-      ]
-      // prerequisites: ["ZX"]
+      ],
+      criticalPath: [],
+      currencyList: ["RD$", "USA$", "EU$"],
+      flatActivitiesDone: [],
+      groupedActivitiesDone: [[]],
+      totalCost: 0,
+      totalDuration: 0
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.createNewActivity = this.createNewActivity.bind(this);
+    this.removeActivity = this.removeActivity.bind(this);
+    this.calculateResult = this.calculateResult.bind(this);
   }
 
   handleChange(event) {
     let id = event.target.id;
     let stateCopy = { ...this.state };
+    let eType = event.target.type;
 
     if (id.substring(1, 9) === "Duration") {
+      // console.log(id);
       let propt1 = id.substring(0, id.indexOf("."));
-      let propt2 = id.substring(
-        id.indexOf(".") + 1,
-        parseInt(id.substring(id.indexOf("-")))
-      );
+      let propt2 = id.substring(id.indexOf(".") + 1, id.indexOf("-"));
       let index = parseInt(id.substring(id.indexOf("-") + 1));
-      debugger;
-      stateCopy.myActivities[index][propt1][propt2] = event.target.value;
+      // debugger;
+      stateCopy.myActivities[index][propt1][propt2] =
+        eType === "number" ? parseInt(event.target.value) : event.target.value;
     } else {
       let propt = id.substring(0, id.indexOf("-"));
       let index = parseInt(id.substring(id.indexOf("-") + 1));
 
-      stateCopy.myActivities[index][propt] = event.target.value;
+      stateCopy.myActivities[index][propt] =
+        eType === "number" ? parseInt(event.target.value) : event.target.value;
     }
 
     this.setState({
@@ -128,30 +162,70 @@ class NewMain extends Component {
     this.setState({
       ...this.state.myActivities.push({
         name: "",
-        prerequisites: [],
-        nDuration: {},
+        pre: [],
+        nDuration: {
+          a: 0,
+          b: 0,
+          c: 0
+        },
         nPrice: 0,
-        rDuration: {},
+        rDuration: {
+          a: 0,
+          b: 0,
+          c: 0
+        },
         rPrice: 0
       })
     });
     console.log(this.state);
   }
 
+  removeActivity(event) {
+    let index = parseInt(
+      event.target.id.substring(event.target.id.indexOf("-") + 1)
+    );
+    this.setState({ ...this.state.myActivities.splice(index, 1) });
+  }
+
+  calculateResult() {
+    let activities = this.state.myActivities;
+
+    this.setState({
+      totalDuration: calculateTotalDuration(
+        activities,
+        this.state.groupedActivitiesDone,
+        this.state.flatActivitiesDone
+      )
+    });
+
+    this.setState({
+      totalDuration: calculateTotalCost(
+        activities,
+        this.state.totalDuration,
+        this.state.adminExpenses
+      )
+    });
+
+    this.setState({
+      criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
+    });
+    console.log(this.state);
+    debugger;
+  }
+
   render() {
     return (
       <Grid container direction="row" justify="center" alignItems="center">
-        <h1>HEllows</h1>
         <Grid item xs={12}>
           <Table className="table">
             <TableHead className="tr">
               <TableRow>
                 <TableCell className="tr">Nombre</TableCell>
                 <TableCell className="tr">Prerequisitos</TableCell>
-                <TableCell className="tr">Duracion N</TableCell>
-                <TableCell className="tr">Costo N</TableCell>
-                <TableCell className="tr">Duracion R</TableCell>
-                <TableCell className="tr">Costo R</TableCell>
+                <TableCell className="tr">Duración Normal</TableCell>
+                <TableCell className="tr">Costo Normal</TableCell>
+                <TableCell className="tr">Duración Reducida</TableCell>
+                <TableCell className="tr">Costo Reducido</TableCell>
                 {/* <TableCell className="tr">Te N</TableCell>
                 <TableCell className="tr">Te R</TableCell>
                 <TableCell className="tr">Vte N</TableCell>
@@ -168,9 +242,7 @@ class NewMain extends Component {
                       <TextField
                         id={`name-${index}`}
                         value={this.state.myActivities[index].name}
-                        // value={this.state.timeUnit}
                         onChange={this.handleChange}
-                        //   onChange={}
                       ></TextField>
                     </TableCell>
                     <TableCell>
@@ -235,7 +307,7 @@ class NewMain extends Component {
                       <TextField
                         id={`rDuration.a-${index}`}
                         label="A"
-                        value={activity.nDuration.a}
+                        value={activity.rDuration.a}
                         onChange={this.handleChange}
                       ></TextField>
                       <TextField
@@ -251,7 +323,6 @@ class NewMain extends Component {
                         type="number"
                         value={activity.rDuration.m}
                         onChange={this.handleChange}
-                        // onChange={event => handleChange(event, "b", index)}
                       ></TextField>
                     </TableCell>
                     <TableCell>
@@ -269,9 +340,11 @@ class NewMain extends Component {
                     <TableCell></TableCell> */}
                     <TableCell>
                       <IconButton
-                      //   onClick={() => removeActivity(data[index].name)}
+                        id={`Btn.name-${index}`}
+                        onClick={this.removeActivity}
                       >
-                        <DeleteForeverOutlinedIcon></DeleteForeverOutlinedIcon>
+                        <DeleteForeverOutlinedIcon />
+                        {/* <DeleteForeverOutlinedIcon id={`Btn.name-${index}`} /> */}
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -286,7 +359,7 @@ class NewMain extends Component {
             Añadir
             <AddIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={this.calculateResult}>
             Calcular
             <SendIcon />
           </IconButton>

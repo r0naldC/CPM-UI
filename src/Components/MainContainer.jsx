@@ -1,38 +1,43 @@
-import React, {
-  useState, useEffect
-} from 'react';
+import React, { useState, useEffect } from "react";
 
-import Table from '@material-ui/core/Table';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Select from '@material-ui/core/Select';
-import Chip from '@material-ui/core/Chip';
-import MenuItem from '@material-ui/core/MenuItem';
-import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined'
-import SendIcon from '@material-ui/icons/Send';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
+import Table from "@material-ui/core/Table";
+import TableFooter from "@material-ui/core/TableFooter";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import Select from "@material-ui/core/Select";
+import Chip from "@material-ui/core/Chip";
+import MenuItem from "@material-ui/core/MenuItem";
+import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
+import SendIcon from "@material-ui/icons/Send";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
-import './css.css';
+import "./css.css";
 
-import { calculateTotalCost, calculateTotalDuration, calculateCriticalPath, Activity, calculateBudget, formula1 } from './toSpare';
-import { isValueInAnotherArray, canRemoveActivity } from './comprobation';
+import {
+  calculateTotalCost,
+  calculateTotalDuration,
+  calculateCriticalPath,
+  Activity,
+  calculateBudget,
+  formula1
+} from "./toSpare";
+import { isValueInAnotherArray, canRemoveActivity } from "./comprobation";
 let resul;
 let sampleData = [
   new Activity("A", 2.0, 100000),
-  new Activity("B", 5.0, 1000000,"A"),
+  new Activity("B", 5.0, 1000000, "A"),
   new Activity("C", 3.0, 500000, "A"),
-  new Activity("D", 6.0, 900000, "B","C"),
+  new Activity("D", 6.0, 900000, "B", "C"),
   new Activity("E", 4.0, 700000, "D")
   // new Activity("F", 1, 1500000, "D", "E"),
   // new Activity("G", 4, 600000, "D", "E")
@@ -54,58 +59,67 @@ function App() {
   let [formula2, setFormula2] = useState(0);
   let [wasCalculated, setCalc] = useState(false);
 
-  const handleData = (data) => {
-    setDuration(calculateTotalDuration(data, groupedActivitiesDone, flatActivitiesDone));
+  const handleData = data => {
+    setDuration(
+      calculateTotalDuration(data, groupedActivitiesDone, flatActivitiesDone)
+    );
     setCost(calculateTotalCost(data, duration, adminExpenses));
     setCriticalPath(calculateCriticalPath(groupedActivitiesDone));
     setBudget(calculateBudget(groupedActivitiesDone, adminExpenses));
     // setFormula(formula1(a,m,b));
-    console.log(formula)
+    console.log(formula);
     setCalc(true);
+  };
+
+  function handleChangeadmExpenses(event) {
+    setExpenses(parseInt(event.target.value));
   }
 
-  function handleChangeadmExpenses(event){
-    setExpenses( parseInt(event.target.value))
-  }
-
-  
   return (
     <div className="App">
-      <Form onSubmit={handleData} handleChangeadmExpenses={handleChangeadmExpenses} adminExpenses={adminExpenses} />
-      
-      {wasCalculated && <div>
-        <div className="horizontal-divisor"></div> 
-        <Results duration={duration} cost={cost} criticalPath={criticalPath} budget={budget} adminExpenses={adminExpenses}/>
-      </div>}
+      <Form
+        onSubmit={handleData}
+        handleChangeadmExpenses={handleChangeadmExpenses}
+        adminExpenses={adminExpenses}
+      />
+
+      {wasCalculated && (
+        <div>
+          <div className="horizontal-divisor"></div>
+          <Results
+            duration={duration}
+            cost={cost}
+            criticalPath={criticalPath}
+            budget={budget}
+            adminExpenses={adminExpenses}
+          />
+        </div>
+      )}
     </div>
   );
 }
 
 // }
 // Probably can use this to render a Chip with delete button
-function preChip(value, handleDeleteFN = () => { }) {
-  return <Chip
-    label={value}
-    onDelete={handleDeleteFN}
-    color="primary"
-  />
+function preChip(value, handleDeleteFN = () => {}) {
+  return <Chip label={value} onDelete={handleDeleteFN} color="primary" />;
 }
 
 function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   let [data, setData] = useState(sampleData);
-  let [names, setName] = useState('');
+  let [names, setName] = useState("");
 
   function handleChange({ target: { value } }, key, index) {
     let newData = [...data];
-    newData[index][key] = key === 'name' ? value : parseInt(value);
+    newData[index][key] = key === "name" ? value : parseInt(value);
     setData(newData);
-    console.log(data)
+    console.log(data);
   }
-  function formula1(a,m,b) {
-    console.log((a + (4.0 * m) + b) / 6.0)
-    return ((a + (4.0 * m) + b) / 6.0).toFixed(2)
-}
-  
+  function formula1(a, m, b) {
+    console.log((a + 4.0 * m + b) / 6.0);
+    return ((a + 4.0 * m + b) / 6.0).toFixed(2);
+  }
+
   function addPre({ target: { value } }, index) {
     let newData = [...data];
     newData[index].pre.push(value);
@@ -122,10 +136,10 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   function removeActivity(activityName) {
     let newData = [...data];
 
-    if (!canRemoveActivity(data,activityName)) {
-      alert('Esta actividad es prerequisito de otra.');
+    if (!canRemoveActivity(data, activityName)) {
+      alert("Esta actividad es prerequisito de otra.");
       return;
-    };
+    }
 
     newData = newData.filter(el => el.name !== activityName);
     // console.log(newData);
@@ -133,157 +147,236 @@ function Form({ onSubmit, handleChangeadmExpenses, adminExpenses }) {
   } // Check if there's an activity that has this one as a prerequisite
 
   function createNewActivity() {
-    setData([...data, new Activity('', 0, 0)])
+    setData([...data, new Activity("", 0, 0)]);
   }
-  
+
   //}
   useEffect(() => {
     formula1();
     // createNewActivity();
     // createNewActivity();
-  }, [])
-
+  }, []);
 
   return (
     <Grid container>
       <Grid item xs={12}>
-      <TextField className="tr2" label="Gastos Administrativos" type="number" value={adminExpenses} onChange={handleChangeadmExpenses}></TextField>
-    <Table className="table">
-    
-    <TableHead className="tr">
-      <TableRow>
-        <TableCell className="tr">Nombre</TableCell>
-        <TableCell className="tr">Prerequisitos</TableCell>
-        <TableCell className="tr">Duracion N</TableCell>
-        <TableCell className="tr">Costo N</TableCell>
-        <TableCell className="tr">Duracion R</TableCell>
-        <TableCell className="tr">Costo R</TableCell>
-         <TableCell className="tr">Te N</TableCell>
-      <TableCell className="tr">Te R</TableCell>
-        <TableCell className="tr">Vte N</TableCell>
-        <TableCell className="tr">Vte r</TableCell>
-        <TableCell className="tr">Importe</TableCell>
-        <TableCell className="tr">Eliminar</TableCell>
-             </TableRow>
-    </TableHead>
-    <TableBody>
-      {
-        data.map((act, index) => {
-          return (
+        <TextField
+          className="tr2"
+          label="Gastos Administrativos"
+          type="number"
+          value={adminExpenses}
+          onChange={handleChangeadmExpenses}
+        ></TextField>
+        <Table className="table">
+          <TableHead className="tr">
             <TableRow>
-              <TableCell > <TextField value={act.name} onChange={event => handleChange(event, 'name', index)}></TextField> </TableCell>
-              <TableCell> {index !== 0 &&
-                <Select
-                  value={act.pre} // Values already Selected
-                  onChange={event => { addPre(event, index) }}
-                  renderValue={selected => <div>{selected + ''}</div>} // The way that already selected values will be rendered
-                >
-                  {/* Handles Values in the Selection Menu */}
-                  {data.map(({ name }) => (name !== act.name && isValueInAnotherArray(data[index].pre, name)) && <MenuItem value={name}>
-                    {name}
-                  </MenuItem>)}
-                </Select>
-              } </TableCell>
-
-              <TableCell > 
-              <TextField label = "A" type="number" value={act.a} onChange={event => handleChange(event, 'a', index)}></TextField>
-              <TextField label = "M" type="number" value={act.b} onChange={event => handleChange(event, 'b', index)}></TextField>
-              <TextField label = "B" type="number" value={act.m} onChange={event => handleChange(event, 'm', index)}></TextField>
-               </TableCell>
-
-              <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell> 
-
-              <TableCell > <TextField label = "A" onChange={event => handleChange(event, 'a', index)}></TextField>
-              <TextField label = "M" type="number"  onChange={event => handleChange(event, 'm', index)}></TextField>
-              <TextField label = "B" type="number"  onChange={event => handleChange(event, 'b', index)}></TextField>
-
-
-               </TableCell>
-               <TableCell > <TextField type="number" value={act.cost} onChange={event => handleChange(event, 'cost', index)}></TextField> </TableCell>
-               <TableCell > {act.duration}</TableCell>
-               <TableCell></TableCell>
-               <TableCell></TableCell> 
-               <TableCell></TableCell>
-               <TableCell></TableCell> 
-               
-               
-
-              <TableCell> <IconButton onClick={() => removeActivity(data[index].name)} > <DeleteForeverOutlinedIcon> </DeleteForeverOutlinedIcon> </IconButton> </TableCell>
+              <TableCell className="tr">Nombre</TableCell>
+              <TableCell className="tr">Prerequisitos</TableCell>
+              <TableCell className="tr">Duracion N</TableCell>
+              <TableCell className="tr">Costo N</TableCell>
+              <TableCell className="tr">Duracion R</TableCell>
+              <TableCell className="tr">Costo R</TableCell>
+              <TableCell className="tr">Te N</TableCell>
+              <TableCell className="tr">Te R</TableCell>
+              <TableCell className="tr">Vte N</TableCell>
+              <TableCell className="tr">Vte r</TableCell>
+              <TableCell className="tr">Importe</TableCell>
+              <TableCell className="tr">Eliminar</TableCell>
             </TableRow>
-          )
-        })
-      }
-    </TableBody>
-    <TableFooter>
-      <Grid >
-        <IconButton onClick={() => { createNewActivity() }}> <AddIcon /> Añadir </IconButton>
-        <IconButton onClick={() => { onSubmit(data) }}>  <SendIcon> </SendIcon> Calcular</IconButton>
-      </Grid>
-    </TableFooter>
+          </TableHead>
+          <TableBody>
+            {data.map((act, index) => {
+              return (
+                <TableRow>
+                  <TableCell>
+                    {" "}
+                    <TextField
+                      value={act.name}
+                      onChange={event => handleChange(event, "name", index)}
+                    ></TextField>{" "}
+                  </TableCell>
+                  <TableCell>
+                    {" "}
+                    {index !== 0 && (
+                      <Select
+                        value={act.pre} // Values already Selected
+                        onChange={event => {
+                          addPre(event, index);
+                        }}
+                        renderValue={selected => <div>{selected + ""}</div>} // The way that already selected values will be rendered
+                      >
+                        {/* Handles Values in the Selection Menu */}
+                        {data.map(
+                          ({ name }) =>
+                            name !== act.name &&
+                            isValueInAnotherArray(data[index].pre, name) && (
+                              <MenuItem value={name}>{name}</MenuItem>
+                            )
+                        )}
+                      </Select>
+                    )}{" "}
+                  </TableCell>
 
-  </Table>
-        
-         </Grid><br/><hr/>
+                  <TableCell>
+                    <TextField
+                      label="A"
+                      type="number"
+                      value={act.a}
+                      onChange={event => handleChange(event, "a", index)}
+                    ></TextField>
+                    <TextField
+                      label="M"
+                      type="number"
+                      value={act.b}
+                      onChange={event => handleChange(event, "b", index)}
+                    ></TextField>
+                    <TextField
+                      label="B"
+                      type="number"
+                      value={act.m}
+                      onChange={event => handleChange(event, "m", index)}
+                    ></TextField>
+                  </TableCell>
+
+                  <TableCell>
+                    {" "}
+                    <TextField
+                      type="number"
+                      value={act.cost}
+                      onChange={event => handleChange(event, "cost", index)}
+                    ></TextField>{" "}
+                  </TableCell>
+
+                  <TableCell>
+                    {" "}
+                    <TextField
+                      label="A"
+                      onChange={event => handleChange(event, "a", index)}
+                    ></TextField>
+                    <TextField
+                      label="M"
+                      type="number"
+                      onChange={event => handleChange(event, "m", index)}
+                    ></TextField>
+                    <TextField
+                      label="B"
+                      type="number"
+                      onChange={event => handleChange(event, "b", index)}
+                    ></TextField>
+                  </TableCell>
+                  <TableCell>
+                    {" "}
+                    <TextField
+                      type="number"
+                      value={act.cost}
+                      onChange={event => handleChange(event, "cost", index)}
+                    ></TextField>{" "}
+                  </TableCell>
+                  <TableCell> {act.duration}</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+
+                  <TableCell>
+                    {" "}
+                    <IconButton
+                      onClick={() => removeActivity(data[index].name)}
+                    >
+                      {" "}
+                      <DeleteForeverOutlinedIcon>
+                        {" "}
+                      </DeleteForeverOutlinedIcon>{" "}
+                    </IconButton>{" "}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          <TableFooter>
+            <Grid>
+              <IconButton
+                onClick={() => {
+                  createNewActivity();
+                }}
+              >
+                {" "}
+                <AddIcon /> Añadir{" "}
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  onSubmit(data);
+                }}
+              >
+                {" "}
+                <SendIcon> </SendIcon> Calcular
+              </IconButton>
+            </Grid>
+          </TableFooter>
+        </Table>
       </Grid>
-   )
+      <br />
+      <hr />
+    </Grid>
+  );
 }
 
 function Results({ duration, cost, criticalPath, budget, adminExpenses }) {
   return (
+    <Grid container>
+      <Grid item xs={12}>
+        <Table className="table">
+          <TableHead className="tr">
+            <TableRow>
+              <TableCell className="tr">Duracion Total</TableCell>
+              <TableCell className="tr">Costo Total</TableCell>
+              <TableCell className="tr">Ruta Critica</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>{duration} Meses</TableCell>
+              <TableCell>{cost + duration * adminExpenses}</TableCell>
+              <TableCell>
+                {criticalPath.map(element => (
+                  <span>{`(${element[0].name})` + " "}</span>
+                ))}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Grid>
+      <br />
+      <hr />
+
       <Grid container>
         <Grid item xs={12}>
-          <Table className="table">
+          <Table className="table1">
             <TableHead className="tr">
-              <TableRow >
-                <TableCell className="tr">Duracion Total</TableCell>
-                <TableCell className="tr">Costo Total</TableCell>
-                <TableCell className="tr">Ruta Critica</TableCell>
+              <TableRow>
+                <TableCell className="tr">Presupuesto</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>{duration} Meses</TableCell>
-               <TableCell>{cost + (duration * adminExpenses)}</TableCell> 
-               <TableCell>{criticalPath.map(element => <span>{`(${element[0].name})` + ' '}</span>)}</TableCell>
+                <div className="tr1">
+                  <TableCell>
+                    {budget.map((elem, index) => {
+                      return (
+                        <p>
+                          {" "}
+                          Mes {index + 1}, {elem}
+                        </p>
+                      );
+                    })}
+                  </TableCell>
+                </div>
               </TableRow>
             </TableBody>
           </Table>
-
-        </Grid><br/><hr/>
-        
-        <Grid container>
-          <Grid item xs={12}>
-              <Table className="table1">
-                <TableHead className="tr" >
-                  <TableRow>
-                    <TableCell className="tr">Presupuesto</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody >
-                  <TableRow >
-                    <div className="tr1">
-                  <TableCell>
-                      {budget.map((elem, index) => {
-                      return <p> Mes {index + 1}, {elem}</p>})}
-                     </TableCell>
-                     </div>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              </Grid>
-              </Grid>
-              
-       
-        
-          
-        
-
-
-
-
+        </Grid>
       </Grid>
-      
-      
+    </Grid>
 
     // <div>
     //   <h1>Resultados</h1>
@@ -309,7 +402,7 @@ function Results({ duration, cost, criticalPath, budget, adminExpenses }) {
     //     </TableBody>
     //   </Table>
     // </div>
-  )
+  );
 }
 
 export default App;
