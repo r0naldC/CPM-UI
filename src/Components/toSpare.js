@@ -193,8 +193,8 @@ function canActivityProceed(currentActivity, flatActivitiesDone) {
 function getHighestDuration(activityGroup) {
     return activityGroup.reduce(
         (max, {
-            duration
-        }) => (duration > max ? duration : max),
+            totalDuration
+        }) => (totalDuration > max ? totalDuration : max),
         0
     );
 }

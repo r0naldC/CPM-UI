@@ -33,7 +33,7 @@ class NewMain extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currency: null,
+      currency: "RD $",
       adminExpenses: 50000,
       timeUnit: "meses",
       myActivities: [
@@ -119,7 +119,7 @@ class NewMain extends Component {
         }
       ],
       criticalPath: [],
-      currencyList: ["RD$", "USA$", "EU$"],
+      currencyList: ["RD $", "USD $", "EUR $"],
       flatActivitiesDone: [],
       groupedActivitiesDone: [[]],
       totalCost: 0,
@@ -127,6 +127,7 @@ class NewMain extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleCurrency = this.handleCurrency.bind(this);
     this.createNewActivity = this.createNewActivity.bind(this);
     this.removeActivity = this.removeActivity.bind(this);
     this.calculateResult = this.calculateResult.bind(this);
@@ -158,6 +159,11 @@ class NewMain extends Component {
     });
   }
 
+  handleCurrency(event) {
+    this.setState({
+      currency: event.target.value
+    });
+  }
   createNewActivity() {
     this.setState({
       ...this.state.myActivities.push({
@@ -166,13 +172,13 @@ class NewMain extends Component {
         nDuration: {
           a: 0,
           b: 0,
-          c: 0
+          m: 0
         },
         nPrice: 0,
         rDuration: {
           a: 0,
           b: 0,
-          c: 0
+          m: 0
         },
         rPrice: 0
       })
@@ -216,6 +222,27 @@ class NewMain extends Component {
   render() {
     return (
       <Grid container direction="row" justify="center" alignItems="center">
+        <Grid item xs={12}>
+          <TextField
+            id={"adminExpenses"}
+            value={this.state.adminExpenses}
+            onChange={this.handleChange}
+          ></TextField>
+          <Select
+            id={"currency"}
+            value={this.state.currency}
+            onChange={this.handleCurrency}
+          >
+            {this.state.currencyList.map((curr, index) => {
+              return (
+                <MenuItem value={curr} key={index}>
+                  {curr}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </Grid>
+
         <Grid item xs={12}>
           <Table className="table">
             <TableHead className="tr">
