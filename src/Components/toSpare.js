@@ -58,6 +58,7 @@ export function calculateTotalCost(activities, totalDuration, adminExpenses) {
             cost,
             duration
         }) => {
+            debugger;
             return total + cost * duration;
         }, 0)
     );
@@ -89,6 +90,7 @@ export function calculateCriticalPath(groupedActivitiesDone) {
     return groupedActivitiesDone
         .map(group => {
             return group.filter(act => {
+                debugger;
                 if (act.duration === getHighestDuration(group)) {
                     console.log(act);
                 }
@@ -193,8 +195,8 @@ function canActivityProceed(currentActivity, flatActivitiesDone) {
 function getHighestDuration(activityGroup) {
     return activityGroup.reduce(
         (max, {
-            totalDuration
-        }) => (totalDuration > max ? totalDuration : max),
+            duration
+        }) => (duration > max ? duration : max),
         0
     );
 }

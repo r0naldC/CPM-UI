@@ -45,14 +45,14 @@ class NewMain extends Component {
             b: 3,
             m: 2
           },
-          nPrice: 100000,
+          cost: 100000,
           rDuration: {
             a: 0.5,
             b: 2,
             m: 1
           },
           rPrice: 25000,
-          nExpectedTime: 0,
+          duration: 0,
           rExpectedTime: 0
         },
         {
@@ -63,14 +63,14 @@ class NewMain extends Component {
             b: 6,
             m: 5
           },
-          nPrice: 1000000,
+          cost: 1000000,
           rDuration: {
             a: 3,
             b: 5,
             m: 4
           },
           rPrice: 90000,
-          nExpectedTime: 0,
+          duration: 0,
           rExpectedTime: 0
         },
         {
@@ -81,14 +81,14 @@ class NewMain extends Component {
             b: 4,
             m: 3
           },
-          nPrice: 500000,
+          cost: 500000,
           rDuration: {
             a: 1,
             b: 3,
             m: 2
           },
           rPrice: 10000,
-          nExpectedTime: 0,
+          duration: 0,
           rExpectedTime: 0
         },
         {
@@ -99,14 +99,14 @@ class NewMain extends Component {
             b: 7,
             m: 6
           },
-          nPrice: 900000,
+          cost: 900000,
           rDuration: {
             a: 4,
             b: 6,
             m: 5
           },
           rPrice: 81000,
-          nExpectedTime: 0,
+          duration: 0,
           rExpectedTime: 0
         },
         {
@@ -117,14 +117,14 @@ class NewMain extends Component {
             b: 5,
             m: 4
           },
-          nPrice: 700000,
+          cost: 700000,
           rDuration: {
             a: 2,
             b: 4,
             m: 3
           },
           rPrice: 35000,
-          nExpectedTime: 0,
+          duration: 0,
           rExpectedTime: 0
         }
       ],
@@ -186,14 +186,14 @@ class NewMain extends Component {
           b: 0,
           m: 0
         },
-        nPrice: 0,
+        cost: 0,
         rDuration: {
           a: 0,
           b: 0,
           m: 0
         },
         rPrice: 0,
-        nExpectedTime: 0,
+        duration: 0,
         rExpectedTime: 0
       })
     });
@@ -209,55 +209,55 @@ class NewMain extends Component {
 
   calculateResult() {
     let activities = this.state.myActivities;
-
-    // this.setState({
-    //   totalDuration: calculateTotalDuration(
-    //     activities,
-    //     this.state.groupedActivitiesDone,
-    //     this.state.flatActivitiesDone
-    //   )
-    // });
-
-    // this.setState({
-    //   totalDuration: calculateTotalCost(
-    //     activities,
-    //     this.state.totalDuration,
-    //     this.state.adminExpenses
-    //   )
-    // });
-
-    // this.setState({
-    //   criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
-    // });
-    // console.log(this.state);
-    // debugger;
-
     this.setDuration();
+
+    this.setState({
+      totalDuration: calculateTotalDuration(
+        activities,
+        this.state.groupedActivitiesDone,
+        this.state.flatActivitiesDone
+      )
+    });
+
     console.log(this.state);
+    debugger;
+    this.setState({
+      totalCost: calculateTotalCost(
+        activities,
+        this.state.totalDuration,
+        this.state.adminExpenses
+      )
+    });
+
+    this.setState({
+      criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
+    });
+
+    console.log(this.state);
+    // this.state.myActivities.map(act => console.log(act.name));
+    // debugger;
   }
 
   expectedTime(durations) {
     let a = durations.a;
     let b = durations.b;
     let m = durations.m;
-    console.log((a + 4.0 * m + b) / 6.0);
-    return ((a + 4.0 * m + b) / 6.0).toFixed(2);
+    // console.log((a + 4.0 * m + b) / 6.0);
+    return parseInt(((a + 4.0 * m + b) / 6.0).toFixed(2));
   }
 
   setDuration() {
     let activitiesCopy = { ...this.state.myActivities };
     this.state.myActivities.map((activity, index) => {
-      activitiesCopy[index].nExpectedTime = this.expectedTime(
-        activity.nDuration
-      );
+      activitiesCopy[index].duration = this.expectedTime(activity.nDuration);
       activitiesCopy[index].rExpectedTime = this.expectedTime(
         activity.rDuration
       );
     });
 
-    this.setState({
-      myActivities: activitiesCopy
-    });
+    // this.setState({
+    //   myActivities: activitiesCopy
+    // });
   }
 
   render() {
@@ -302,7 +302,6 @@ class NewMain extends Component {
                 <TableCell className="tr">Eliminar</TableCell>
               </TableRow>
             </TableHead>
-            ~{" "}
             <TableBody>
               {this.state.myActivities.map((activity, index) => {
                 return (
@@ -366,9 +365,9 @@ class NewMain extends Component {
                     </TableCell>
                     <TableCell>
                       <TextField
-                        id={`nPrice-${index}`}
+                        id={`cost-${index}`}
                         type="number"
-                        value={activity.nPrice}
+                        value={activity.cost}
                         onChange={this.handleChange}
                       ></TextField>
                     </TableCell>
