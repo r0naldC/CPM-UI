@@ -1,32 +1,29 @@
 import React, { Component } from "react";
 
 import Table from "@material-ui/core/Table";
-import TableFooter from "@material-ui/core/TableFooter";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Select from "@material-ui/core/Select";
-import Chip from "@material-ui/core/Chip";
 import MenuItem from "@material-ui/core/MenuItem";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import SendIcon from "@material-ui/icons/Send";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 import Result from "./Result";
-import Budget from "./Budget";
 
 import {
   calculateTotalCost,
   calculateTotalDuration,
   calculateCriticalPath,
-  Activity,
-  calculateBudget,
-  formula1
+  rcalculateTotalCost,
+  rcalculateTotalDuration,
+  rcalculateCriticalPath
 } from "./toSpare";
 
 class NewMain extends Component {
@@ -40,6 +37,7 @@ class NewMain extends Component {
         {
           name: "A",
           pre: [],
+          rpre: [],
           nDuration: {
             a: 1,
             b: 3,
@@ -51,13 +49,14 @@ class NewMain extends Component {
             b: 2,
             m: 1
           },
-          rPrice: 25000,
+          rcost: 25000,
           duration: 0,
-          rExpectedTime: 0
+          rduration: 0
         },
         {
           name: "B",
           pre: ["A"],
+          rpre: ["A"],
           nDuration: {
             a: 4,
             b: 6,
@@ -69,13 +68,14 @@ class NewMain extends Component {
             b: 5,
             m: 4
           },
-          rPrice: 90000,
+          rcost: 90000,
           duration: 0,
-          rExpectedTime: 0
+          rduration: 0
         },
         {
           name: "C",
           pre: ["A"],
+          rpre: ["A"],
           nDuration: {
             a: 2,
             b: 4,
@@ -87,13 +87,14 @@ class NewMain extends Component {
             b: 3,
             m: 2
           },
-          rPrice: 10000,
+          rcost: 10000,
           duration: 0,
-          rExpectedTime: 0
+          rduration: 0
         },
         {
           name: "D",
           pre: ["B", "C"],
+          rpre: ["B", "C"],
           nDuration: {
             a: 5,
             b: 7,
@@ -105,13 +106,14 @@ class NewMain extends Component {
             b: 6,
             m: 5
           },
-          rPrice: 81000,
+          rcost: 81000,
           duration: 0,
-          rExpectedTime: 0
+          rduration: 0
         },
         {
           name: "E",
           pre: ["D"],
+          rpre: ["D"],
           nDuration: {
             a: 3,
             b: 5,
@@ -123,17 +125,24 @@ class NewMain extends Component {
             b: 4,
             m: 3
           },
-          rPrice: 35000,
+          rcost: 35000,
           duration: 0,
-          rExpectedTime: 0
+          rduration: 0
         }
       ],
       criticalPath: [],
       currencyList: ["RD $", "USD $", "EUR $"],
+      timeUnitList: ["horas", "días", "meses", "años"],
       flatActivitiesDone: [],
       groupedActivitiesDone: [[]],
       totalCost: 0,
-      totalDuration: 0
+      totalDuration: 0,
+      rcriticalPath: [],
+      rflatActivitiesDone: [],
+      rgroupedActivitiesDone: [[]],
+      rtotalCost: 0,
+      rtotalDuration: 0,
+      wasCalculated: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -143,6 +152,9 @@ class NewMain extends Component {
     this.calculateResult = this.calculateResult.bind(this);
     this.expectedTime = this.expectedTime.bind(this);
     this.setDuration = this.setDuration.bind(this);
+    this.handleTimeUnit = this.handleTimeUnit.bind(this);
+    this.clearTable = this.clearTable.bind(this);
+    this.addPre = this.addPre.bind(this);
   }
 
   handleChange(event) {
@@ -176,11 +188,19 @@ class NewMain extends Component {
       currency: event.target.value
     });
   }
+
+  handleTimeUnit(event) {
+    this.setState({
+      timeUnit: event.target.value
+    });
+  }
+
   createNewActivity() {
     this.setState({
       ...this.state.myActivities.push({
         name: "",
         pre: [],
+        rpre: [],
         nDuration: {
           a: 0,
           b: 0,
@@ -192,9 +212,9 @@ class NewMain extends Component {
           b: 0,
           m: 0
         },
-        rPrice: 0,
+        rcost: 0,
         duration: 0,
-        rExpectedTime: 0
+        rduration: 0
       })
     });
     console.log(this.state);
@@ -219,30 +239,44 @@ class NewMain extends Component {
       )
     });
 
-    console.log(this.state);
-    debugger;
+    activities.map(act => {
+      return (act.isDone = false);
+    });
+
+    this.setState({
+      rtotalDuration: rcalculateTotalDuration(
+        activities,
+        this.state.rgroupedActivitiesDone,
+        this.state.rflatActivitiesDone
+      )
+    });
+
     this.setState({
       totalCost: calculateTotalCost(
         activities,
         this.state.totalDuration,
         this.state.adminExpenses
+      ),
+      rtotalCost: rcalculateTotalCost(
+        activities,
+        this.state.rtotalDuration,
+        this.state.adminExpenses
       )
     });
 
     this.setState({
-      criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
+      criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone),
+      rcriticalPath: rcalculateCriticalPath(this.state.rgroupedActivitiesDone),
+      wasCalculated: true
     });
 
     console.log(this.state);
-    // this.state.myActivities.map(act => console.log(act.name));
-    // debugger;
   }
 
   expectedTime(durations) {
     let a = durations.a;
     let b = durations.b;
     let m = durations.m;
-    // console.log((a + 4.0 * m + b) / 6.0);
     return parseInt(((a + 4.0 * m + b) / 6.0).toFixed(2));
   }
 
@@ -250,14 +284,33 @@ class NewMain extends Component {
     let activitiesCopy = { ...this.state.myActivities };
     this.state.myActivities.map((activity, index) => {
       activitiesCopy[index].duration = this.expectedTime(activity.nDuration);
-      activitiesCopy[index].rExpectedTime = this.expectedTime(
-        activity.rDuration
-      );
+      activitiesCopy[index].rduration = this.expectedTime(activity.rDuration);
     });
+  }
 
-    // this.setState({
-    //   myActivities: activitiesCopy
-    // });
+  addPre(event) {
+    let activities = [...this.state.myActivities];
+    let index = parseInt(event.target.name);
+    let value = event.target.value;
+    let elPosition = activities[index].pre.indexOf(value);
+
+    // debugger;
+    elPosition > -1
+      ? activities[index].pre.splice(elPosition, 1)
+      : activities[index].pre.push(value);
+
+    this.setState({
+      myActivities: activities
+    });
+  }
+
+  clearTable() {
+    this.setState({
+      adminExpenses: 0,
+      currency: "RD $",
+      timeUnit: "meses",
+      myActivities: []
+    });
   }
 
   render() {
@@ -278,6 +331,19 @@ class NewMain extends Component {
               return (
                 <MenuItem value={curr} key={index}>
                   {curr}
+                </MenuItem>
+              );
+            })}
+          </Select>
+          <Select
+            id={"timeUnit"}
+            value={this.state.timeUnit}
+            onChange={this.handleTimeUnit}
+          >
+            {this.state.timeUnitList.map((tUnit, index) => {
+              return (
+                <MenuItem value={tUnit} key={index}>
+                  {tUnit}
                 </MenuItem>
               );
             })}
@@ -316,27 +382,23 @@ class NewMain extends Component {
                     <TableCell>
                       {index != 0 && (
                         <Select
+                          name={`${index}`}
                           display={index !== 0 ? "block" : "none"}
-                          // value={index !== 0 ? this.state.myActivities : null} // Values already Selected
-                          value={"Select a P"}
+                          value={activity.pre}
+                          renderValue={selected => <div>{selected + ""}</div>}
+                          onChange={this.addPre}
                         >
                           {/* Handles Values in the Selection Menu */}
-                          {this.state.myActivities.map(
-                            ({ name }, ind) => {
-                              return (
-                                name !== activity.name &&
-                                index > ind && (
-                                  <MenuItem value={name} key={ind}>
-                                    {name}
-                                  </MenuItem>
-                                )
-                              );
-                            }
-
-                            // isValueInAnotherArray(data[index].pre, name) && (
-                            //   <MenuItem value={name}>{name}<Result/MenuItem>
-                            // )
-                          )}
+                          {this.state.myActivities.map(({ name }, ind) => {
+                            return (
+                              name !== activity.name &&
+                              index > ind && (
+                                <MenuItem value={name} key={ind}>
+                                  {name}
+                                </MenuItem>
+                              )
+                            );
+                          })}
                         </Select>
                       )}
                     </TableCell>
@@ -395,9 +457,9 @@ class NewMain extends Component {
                     </TableCell>
                     <TableCell>
                       <TextField
-                        id={`rPrice-${index}`}
+                        id={`rcost-${index}`}
                         type="number"
-                        value={activity.rPrice}
+                        value={activity.rcost}
                         onChange={this.handleChange}
                       ></TextField>
                     </TableCell>
@@ -423,6 +485,10 @@ class NewMain extends Component {
         </Grid>
 
         <Grid item xs={12}>
+          <IconButton onClick={this.clearTable}>
+            Limpiar
+            <DeleteOutlineIcon />
+          </IconButton>
           <IconButton onClick={this.createNewActivity}>
             Añadir
             <AddIcon />
@@ -433,9 +499,11 @@ class NewMain extends Component {
           </IconButton>
         </Grid>
 
-        {/* <Grid item xs={12}>
-          <Result timeUnit={this.state.timeUnit} />
-        </Grid> */}
+        {this.state.wasCalculated && (
+          <Grid item xs={12}>
+            <Result state={this.state} />
+          </Grid>
+        )}
 
         {/* <Grid item xs={12}>
           <Budget />

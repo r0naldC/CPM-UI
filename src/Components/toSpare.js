@@ -1,32 +1,31 @@
-let inputs = document.getElementsByTagName('TextField'),
-    inputsArray = []
+let inputs = document.getElementsByTagName("TextField"),
+    inputsArray = [];
 for (const input of inputs) {
     inputsArray.push(input);
-
 }
 inputsArray
     .filter(input => input.id)
     .forEach(input => {
-        input.addEventListener('change', () => {
+        input.addEventListener("change", () => {
             formula1();
             Activity();
-        })
-    })
+        });
+    });
 export function formula1(a, m, b) {
-    console.log((a + (4.0 * m) + b) / 6.0)
-    return ((a + (4.0 * m) + b) / 6.0).toFixed(2)
+    // console.log((a + 4.0 * m + b) / 6.0);
+    return ((a + 4.0 * m + b) / 6.0).toFixed(2);
 }
 export function formula2(a, b) {
     // console.log((a + (4.0 * m) + b) / 6.0)
-    return (((a + b) / 6.0) ^ 0.5).toFixed(2)
+    return (((a + b) / 6.0) ^ 0.5).toFixed(2);
 }
 
 /**
- * 
- * @param {String} name 
- * @param {Number} duration 
- * @param {Number} cost 
- * @param  {...String} pre 
+ *
+ * @param {String} name
+ * @param {Number} duration
+ * @param {Number} cost
+ * @param  {...String} pre
  */
 export function Activity(name, duration, cost, ...pre) {
     this.name = name;
@@ -46,33 +45,47 @@ we must do some checks:
 // Main
 
 /**
- * 
- * @param {Array<Activity>} activities 
- * @param {Number} adminExpenses 
- * @param {Number} totalDuration 
+ *
+ * @param {Array<Activity>} activities
+ * @param {Number} adminExpenses
+ * @param {Number} totalDuration
  */
 export function calculateTotalCost(activities, totalDuration, adminExpenses) {
-    // debugger;
-    return (
-        activities.reduce((total, {
-            cost,
-            duration
-        }) => {
-            debugger;
-            return total + cost * duration;
-        }, 0)
-    );
+    debugger;
+    return activities.reduce((total, {
+        cost,
+        duration
+    }) => {
+        // debugger;
+        return total + cost * duration;
+    }, 0);
+}
+
+export function rcalculateTotalCost(activities, rtotalDuration, adminExpenses) {
+    debugger;
+    return activities.reduce((total, {
+        rcost,
+        rduration
+    }) => {
+        // debugger;
+        return total + rcost * rduration;
+    }, 0);
 }
 
 // Main
 /**
- * 
- * @param {Array<Activity>} activities 
- * @param {Array<Array<Activity>>} groupedActivitiesDone 
+ *
+ * @param {Array<Activity>} activities
+ * @param {Array<Array<Activity>>} groupedActivitiesDone
  */
-export function calculateTotalDuration(activities, groupedActivitiesDone, flatActivitiesDone) {
+export function calculateTotalDuration(
+    activities,
+    groupedActivitiesDone,
+    flatActivitiesDone
+) {
     // debugger;
     handleActivities(activities, flatActivitiesDone, groupedActivitiesDone);
+    debugger;
     return groupedActivitiesDone
         .map(group => {
             return getHighestDuration(group);
@@ -80,32 +93,59 @@ export function calculateTotalDuration(activities, groupedActivitiesDone, flatAc
         .reduce((total, curr) => total + curr, 0);
 }
 
+export function rcalculateTotalDuration(
+    activities,
+    rgroupedActivitiesDone,
+    rflatActivitiesDone
+) {
+    // debugger;
+    rhandleActivities(activities, rflatActivitiesDone, rgroupedActivitiesDone);
+    debugger;
+    return rgroupedActivitiesDone
+        .map(group => {
+            return rgetHighestDuration(group);
+        })
+        .reduce((total, curr) => total + curr, 0);
+}
+
 // Main
 /**
- * 
- * @param {Array<Array<Activity>>} groupedActivitiesDone 
+ *
+ * @param {Array<Array<Activity>>} groupedActivitiesDone
  */
 export function calculateCriticalPath(groupedActivitiesDone) {
-    debugger;
-    return groupedActivitiesDone
-        .map(group => {
-            return group.filter(act => {
-                debugger;
-                if (act.duration === getHighestDuration(group)) {
-                    console.log(act);
-                }
-                return act.duration === getHighestDuration(group)
-            })
+    // debugger;
+    return groupedActivitiesDone.map(group => {
+        return group.filter(act => {
+            // debugger;
+            if (act.duration === getHighestDuration(group)) {
+                // console.log(act);
+            }
+            return act.duration === getHighestDuration(group);
         });
+    });
+}
+
+export function rcalculateCriticalPath(groupedActivitiesDone) {
+    // debugger;
+    return groupedActivitiesDone.map(group => {
+        return group.filter(act => {
+            // debugger;
+            if (act.rduration === rgetHighestDuration(group)) {
+                // console.log(act);
+            }
+            return act.rduration === rgetHighestDuration(group);
+        });
+    });
 }
 
 // Main
 export function calculateBudget(groupedActivities, adminExpenses) {
-    const budget = []
+    const budget = [];
     for (const group of groupedActivities) {
         const groupHighestDuration = getHighestDuration(group);
         for (let time = 1; time <= groupHighestDuration; time++) {
-            budget.push(adminExpenses)
+            budget.push(adminExpenses);
             group.forEach(act => {
                 if (time <= act.duration) budget[budget.length - 1] += act.cost;
             });
@@ -117,12 +157,16 @@ export function calculateBudget(groupedActivities, adminExpenses) {
 /* Helper, basically does most part of the job, i think it can explain itself.
  */
 /**
- * 
- * @param {Array<Activity>} activities 
- * @param {Array<Activity>} flatActivitiesDone 
- * @param {Array<Activity>} groupedActivitiesDone 
+ *
+ * @param {Array<Activity>} activities
+ * @param {Array<Activity>} flatActivitiesDone
+ * @param {Array<Activity>} groupedActivitiesDone
  */
-function handleActivities(activities, flatActivitiesDone, groupedActivitiesDone) {
+function handleActivities(
+    activities,
+    flatActivitiesDone,
+    groupedActivitiesDone
+) {
     //By default these grab the ones without prerequisites
 
     // debugger;
@@ -160,17 +204,60 @@ function handleActivities(activities, flatActivitiesDone, groupedActivitiesDone)
     }
 }
 
+function rhandleActivities(
+    ractivities,
+    rflatActivitiesDone,
+    rgroupedActivitiesDone
+) {
+    //By default these grab the ones without prerequisites
+
+    debugger;
+
+    while (rflatActivitiesDone.length !== ractivities.length) {
+        let ractivitiesNotDone = ractivities.filter(act => !act.isDone);
+        let ractivitiesReady = [];
+        let rindexOfActivity;
+
+        // Check for activities that are ready to be processed / checkForReadyActivities / Helper
+        for (const activity of ractivitiesNotDone) {
+            if (rcanActivityProceed(activity, rflatActivitiesDone)) {
+                ractivitiesReady.push(activity.name);
+            }
+        }
+
+        if (ractivitiesReady.length === 0) {
+            console.error("There's an activity with invalid prerrequisites");
+            return;
+        }
+
+        // Handles activities that are ready / handleReadyActivities / Helper
+        for (const activity of ractivitiesReady) {
+            rindexOfActivity = ractivities.findIndex(act => {
+                return act.name === activity;
+            });
+            ractivities[rindexOfActivity].isDone = true;
+            rflatActivitiesDone.push(ractivities[rindexOfActivity]);
+            rgroupedActivitiesDone[rgroupedActivitiesDone.length - 1].push(
+                ractivities[rindexOfActivity]
+            );
+        }
+        if (rindexOfActivity !== ractivities.length - 1)
+            rgroupedActivitiesDone.push([]);
+    }
+}
+
 /* Helper, checks the that the prerequisites of an activity, 
 returns true if all of its prerequisites are already done, else returns false.*/
 
 /**
- * 
- * @param {Activity} currentActivity 
- * @param {Array<Activity>} activitiesDone 
+ *
+ * @param {Activity} currentActivity
+ * @param {Array<Activity>} activitiesDone
  */
 function canActivityProceed(currentActivity, flatActivitiesDone) {
+    // debugger;
     /* If the required activities are more than the ones done, then 
-    the current one is not eligible just yet.*/
+        the current one is not eligible just yet.*/
     if (currentActivity.pre.length > flatActivitiesDone.length) return false;
     else {
         /* If there are more than one pre required activity, then we must check
@@ -187,16 +274,45 @@ function canActivityProceed(currentActivity, flatActivitiesDone) {
     return true;
 }
 
+function rcanActivityProceed(rcurrentActivity, rflatActivitiesDone) {
+    /* If the required activities are more than the ones done, then 
+        the current one is not eligible just yet.*/
+    debugger;
+    if (rcurrentActivity.rpre.length > rflatActivitiesDone.length) return false;
+    else {
+        /* If there are more than one pre required activity, then we must check
+  that all of them are in the flatActivitiesDone List. */
+        for (const rcurrentPre of rcurrentActivity.rpre) {
+            const rcanBeProceeded = !!rflatActivitiesDone.find(ract => {
+                return ract.name === rcurrentPre;
+            });
+            if (rcanBeProceeded) {
+                continue;
+            } else return false;
+        }
+    }
+    return true;
+}
+
 // Helper
 /**
- * 
- * @param {Array<Array<Activity>>} activityGroup 
+ *
+ * @param {Array<Array<Activity>>} activityGroup
  */
 function getHighestDuration(activityGroup) {
     return activityGroup.reduce(
         (max, {
             duration
         }) => (duration > max ? duration : max),
+        0
+    );
+}
+
+function rgetHighestDuration(ractivityGroup) {
+    return ractivityGroup.reduce(
+        (max, {
+            rduration
+        }) => (rduration > max ? rduration : max),
         0
     );
 }
