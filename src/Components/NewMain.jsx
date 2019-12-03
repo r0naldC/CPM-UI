@@ -34,88 +34,98 @@ class NewMain extends Component {
     super(props);
     this.state = {
       currency: "RD $",
-      adminExpenses: 50000,
+      adminExpenses: 35000,
       timeUnit: "meses",
       myActivities: [
         {
           name: "A",
           pre: [],
           nDuration: {
-            a: 15,
-            b: 20,
-            m: 23
+            a: 1,
+            b: 3,
+            m: 2
           },
-          nPrice: 37500,
+          nPrice: 100000,
           rDuration: {
-            a: 10,
-            b: 17,
-            m: 20
+            a: 0.5,
+            b: 2,
+            m: 1
           },
-          rPrice: 25000
+          rPrice: 25000,
+          nExpectedTime: 0,
+          rExpectedTime: 0
         },
         {
           name: "B",
           pre: ["A"],
           nDuration: {
-            a: 15,
-            b: 20,
-            m: 23
+            a: 4,
+            b: 6,
+            m: 5
           },
-          nPrice: 37500,
+          nPrice: 1000000,
           rDuration: {
-            a: 10,
-            b: 17,
-            m: 20
+            a: 3,
+            b: 5,
+            m: 4
           },
-          rPrice: 25000
+          rPrice: 90000,
+          nExpectedTime: 0,
+          rExpectedTime: 0
         },
         {
           name: "C",
           pre: ["A"],
           nDuration: {
-            a: 15,
-            b: 20,
-            m: 23
+            a: 2,
+            b: 4,
+            m: 3
           },
-          nPrice: 37500,
+          nPrice: 500000,
           rDuration: {
-            a: 10,
-            b: 17,
-            m: 20
+            a: 1,
+            b: 3,
+            m: 2
           },
-          rPrice: 25000
+          rPrice: 10000,
+          nExpectedTime: 0,
+          rExpectedTime: 0
         },
         {
           name: "D",
           pre: ["B", "C"],
           nDuration: {
-            a: 15,
-            b: 20,
-            m: 23
+            a: 5,
+            b: 7,
+            m: 6
           },
-          nPrice: 37500,
+          nPrice: 900000,
           rDuration: {
-            a: 10,
-            b: 17,
-            m: 20
+            a: 4,
+            b: 6,
+            m: 5
           },
-          rPrice: 25000
+          rPrice: 81000,
+          nExpectedTime: 0,
+          rExpectedTime: 0
         },
         {
           name: "E",
           pre: ["D"],
           nDuration: {
-            a: 15,
-            b: 20,
-            m: 23
+            a: 3,
+            b: 5,
+            m: 4
           },
-          nPrice: 37500,
+          nPrice: 700000,
           rDuration: {
-            a: 10,
-            b: 17,
-            m: 20
+            a: 2,
+            b: 4,
+            m: 3
           },
-          rPrice: 25000
+          rPrice: 35000,
+          nExpectedTime: 0,
+          rExpectedTime: 0
         }
       ],
       criticalPath: [],
@@ -131,6 +141,8 @@ class NewMain extends Component {
     this.createNewActivity = this.createNewActivity.bind(this);
     this.removeActivity = this.removeActivity.bind(this);
     this.calculateResult = this.calculateResult.bind(this);
+    this.expectedTime = this.expectedTime.bind(this);
+    this.setDuration = this.setDuration.bind(this);
   }
 
   handleChange(event) {
@@ -180,7 +192,9 @@ class NewMain extends Component {
           b: 0,
           m: 0
         },
-        rPrice: 0
+        rPrice: 0,
+        nExpectedTime: 0,
+        rExpectedTime: 0
       })
     });
     console.log(this.state);
@@ -196,27 +210,54 @@ class NewMain extends Component {
   calculateResult() {
     let activities = this.state.myActivities;
 
-    this.setState({
-      totalDuration: calculateTotalDuration(
-        activities,
-        this.state.groupedActivitiesDone,
-        this.state.flatActivitiesDone
-      )
-    });
+    // this.setState({
+    //   totalDuration: calculateTotalDuration(
+    //     activities,
+    //     this.state.groupedActivitiesDone,
+    //     this.state.flatActivitiesDone
+    //   )
+    // });
 
-    this.setState({
-      totalDuration: calculateTotalCost(
-        activities,
-        this.state.totalDuration,
-        this.state.adminExpenses
-      )
-    });
+    // this.setState({
+    //   totalDuration: calculateTotalCost(
+    //     activities,
+    //     this.state.totalDuration,
+    //     this.state.adminExpenses
+    //   )
+    // });
 
-    this.setState({
-      criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
-    });
+    // this.setState({
+    //   criticalPath: calculateCriticalPath(this.state.groupedActivitiesDone)
+    // });
+    // console.log(this.state);
+    // debugger;
+
+    this.setDuration();
     console.log(this.state);
-    debugger;
+  }
+
+  expectedTime(durations) {
+    let a = durations.a;
+    let b = durations.b;
+    let m = durations.m;
+    console.log((a + 4.0 * m + b) / 6.0);
+    return ((a + 4.0 * m + b) / 6.0).toFixed(2);
+  }
+
+  setDuration() {
+    let activitiesCopy = { ...this.state.myActivities };
+    this.state.myActivities.map((activity, index) => {
+      activitiesCopy[index].nExpectedTime = this.expectedTime(
+        activity.nDuration
+      );
+      activitiesCopy[index].rExpectedTime = this.expectedTime(
+        activity.rDuration
+      );
+    });
+
+    this.setState({
+      myActivities: activitiesCopy
+    });
   }
 
   render() {
@@ -261,6 +302,7 @@ class NewMain extends Component {
                 <TableCell className="tr">Eliminar</TableCell>
               </TableRow>
             </TableHead>
+            ~{" "}
             <TableBody>
               {this.state.myActivities.map((activity, index) => {
                 return (
